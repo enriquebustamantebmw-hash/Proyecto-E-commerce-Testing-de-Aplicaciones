@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Login</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+
+    <div class="navbar">
+        <div class="logo">Test<span>Commerce</span></div>
+        <div>
+            <a href="/">Inicio</a>
+            <a href="/productos">Productos</a>
+            <a href="/carrito">Carrito</a>
+        </div>
+    </div>
+
+    <div class="form-box">
+        <h1>Iniciar sesion</h1>
+
+        <form method="POST">
+            <label>Email:</label>
+            <input type="email" name="email" placeholder="usuario@test.com">
+
+            <label>Contraseña:</label>
+            <input type="password" name="password" placeholder="1234">
+
+            <button class="btn" type="submit">Ingresar</button>
+        </form>
+
+        <p class="mensaje">{{ mensaje }}</p>
+
+        <div class="info-login">
+            <p><strong>Usuario de prueba:</strong></p>
+            <p>Email: usuario@test.com</p>
+            <p>Contraseña: 1234</p>
+        </div>
+    </div>
+
+    <div class="footer">
+        TestCommerce - Login
+    </div>
+
+</body>
+</html>

@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>TestCommerce</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+
+    <div class="navbar">
+        <div class="logo">Test<span>Commerce</span></div>
+        <div>
+            <a href="/">Inicio</a>
+            <a href="/productos">Productos</a>
+            <a href="/carrito">Carrito</a>
+            <a href="/login">Login</a>
+            <a href="/logout">Cerrar sesion</a>
+        </div>
+    </div>
+
+    <section class="hero">
+        <h1>E-commerce para testing de aplicaciones</h1>
+        <p>Una tienda ficticia para probar login, carrito, checkout, stock, validaciones y errores.</p>
+        <a class="btn" href="/productos">Ver productos</a>
+    </section>
+
+    <div class="contenedor">
+        <h2 class="titulo">¿Qué se puede testear?</h2>
+
+        <div class="grid-productos">
+            <div class="card">
+                <h3>Login y usuarios</h3>
+                <p>Pruebas con credenciales correctas, incorrectas y usuarios no registrados.</p>
+            </div>
+
+            <div class="card">
+                <h3>Carrito de compras</h3>
+                <p>Agregar productos, eliminar productos, calcular subtotales y total final.</p>
+            </div>
+
+            <div class="card">
+                <h3>Stock</h3>
+                <p>Validar productos disponibles, productos sin stock y cantidades inválidas.</p>
+            </div>
+
+            <div class="card">
+                <h3>Checkout</h3>
+                <p>Probar campos obligatorios, medios de pago y confirmación del pedido.</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="footer">
+        TestCommerce - Proyecto demo para testing
+    </div>
+
+</body>
+</html>

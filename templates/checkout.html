@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Checkout</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+
+    <div class="navbar">
+        <div class="logo">Test<span>Commerce</span></div>
+        <div>
+            <a href="/">Inicio</a>
+            <a href="/productos">Productos</a>
+            <a href="/carrito">Carrito</a>
+        </div>
+    </div>
+
+    <div class="form-box">
+        <h1>Finalizar compra</h1>
+
+        <form method="POST">
+            <label>Nombre completo:</label>
+            <input type="text" name="nombre" placeholder="Ej: Enrique Bustamante">
+
+            <label>Direccion:</label>
+            <input type="text" name="direccion" placeholder="Ej: Av. Corrientes 1234">
+
+            <label>Telefono:</label>
+            <input type="text" name="telefono" placeholder="Ej: 1123456789">
+
+            <label>Metodo de pago:</label>
+            <select name="pago">
+                <option value="">Seleccionar</option>
+                <option value="tarjeta">Tarjeta</option>
+                <option value="mercadopago">MercadoPago</option>
+                <option value="transferencia">Transferencia</option>
+            </select>
+
+            <button class="btn" type="submit">Confirmar pedido</button>
+        </form>
+
+        <p class="mensaje">{{ mensaje }}</p>
+    </div>
+
+    <div class="footer">
+        TestCommerce - Checkout
+    </div>
+
+</body>
+</html>
