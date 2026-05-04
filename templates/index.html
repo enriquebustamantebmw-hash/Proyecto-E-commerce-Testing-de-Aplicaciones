@@ -2,57 +2,115 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <title>TestCommerce</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TestCommerce — E-commerce para testing</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 <body>
 
-    <div class="navbar">
-        <div class="logo">Test<span>Commerce</span></div>
-        <div>
+    <nav class="navbar">
+        <a href="/" class="logo">Test<span>Commerce</span></a>
+        <div class="nav-links">
             <a href="/">Inicio</a>
             <a href="/productos">Productos</a>
-            <a href="/carrito">Carrito</a>
-            <a href="/login">Login</a>
-            <a href="/logout">Cerrar sesion</a>
+            <a href="/carrito" class="nav-cart">Carrito<span class="cart-count" data-cart-count hidden>0</span></a>
+            {% if current_rol == 'admin' %}<a href="/admin">Admin</a>{% endif %}
+            {% if current_user %}
+                <a href="/logout" class="cta">Cerrar sesión</a>
+            {% else %}
+                <a href="/login" class="cta">Login</a>
+            {% endif %}
         </div>
-    </div>
+    </nav>
 
     <section class="hero">
-        <h1>E-commerce para testing de aplicaciones</h1>
-        <p>Una tienda ficticia para probar login, carrito, checkout, stock, validaciones y errores.</p>
-        <a class="btn" href="/productos">Ver productos</a>
+        <div class="hero-inner">
+            <div class="hero-content">
+                <span class="badge">Demo en vivo · Proyecto académico</span>
+                <h1>Practicá QA en un <em>e-commerce real</em></h1>
+                <p>Una tienda ficticia con login, carrito, checkout, validaciones y manejo de stock. Diseñada para entrenar testing manual y automatizado en escenarios reales.</p>
+                <div class="hero-actions">
+                    <a class="btn" href="/productos">Explorar productos →</a>
+                    <a class="btn btn-secundario" href="/login">Iniciar sesión</a>
+                </div>
+                <div class="hero-stats">
+                    <div>
+                        <div class="stat-num">4+</div>
+                        <div class="stat-label">Productos</div>
+                    </div>
+                    <div>
+                        <div class="stat-num">10+</div>
+                        <div class="stat-label">Casos de prueba</div>
+                    </div>
+                    <div>
+                        <div class="stat-num">100%</div>
+                        <div class="stat-label">Open source</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="hero-visual" aria-hidden="true">
+                <div class="mock-card left">
+                    <div class="mock-img" style="background:linear-gradient(135deg,#f59e0b,#ef4444)">🎧</div>
+                    <span class="tag-mini">Accesorios</span>
+                    <div class="mock-title">Auriculares JBL</div>
+                    <div class="mock-price">$ 90.000</div>
+                </div>
+                <div class="mock-card main">
+                    <div class="mock-img">📱</div>
+                    <span class="tag-mini">Celulares</span>
+                    <div class="mock-title">iPhone 15</div>
+                    <div class="mock-price">$ 1.200.000</div>
+                </div>
+                <div class="mock-card right">
+                    <div class="mock-img" style="background:linear-gradient(135deg,#10b981,#06b6d4)">💻</div>
+                    <span class="tag-mini">Notebooks</span>
+                    <div class="mock-title">Lenovo</div>
+                    <div class="mock-price">$ 850.000</div>
+                </div>
+            </div>
+        </div>
     </section>
 
     <div class="contenedor">
         <h2 class="titulo">¿Qué se puede testear?</h2>
+        <p class="subtitulo">Funcionalidades clave para diseñar tus casos de prueba.</p>
 
-        <div class="grid-productos">
-            <div class="card">
+        <div class="grid-features">
+            <div class="feature">
+                <div class="feature-icon">🔐</div>
                 <h3>Login y usuarios</h3>
                 <p>Pruebas con credenciales correctas, incorrectas y usuarios no registrados.</p>
             </div>
 
-            <div class="card">
+            <div class="feature">
+                <div class="feature-icon">🛒</div>
                 <h3>Carrito de compras</h3>
-                <p>Agregar productos, eliminar productos, calcular subtotales y total final.</p>
+                <p>Agregar productos, eliminarlos, calcular subtotales y total final.</p>
             </div>
 
-            <div class="card">
+            <div class="feature">
+                <div class="feature-icon">📦</div>
                 <h3>Stock</h3>
-                <p>Validar productos disponibles, productos sin stock y cantidades inválidas.</p>
+                <p>Validar productos disponibles, sin stock y cantidades inválidas.</p>
             </div>
 
-            <div class="card">
+            <div class="feature">
+                <div class="feature-icon">💳</div>
                 <h3>Checkout</h3>
                 <p>Probar campos obligatorios, medios de pago y confirmación del pedido.</p>
             </div>
         </div>
     </div>
 
-    <div class="footer">
-        TestCommerce - Proyecto demo para testing
-    </div>
+    <footer class="footer">
+        TestCommerce · Proyecto demo para testing de aplicaciones
+    </footer>
 
+    <script type="module" src="{{ url_for('static', filename='animations.js') }}"></script>
+    <script type="module" src="{{ url_for('static', filename='cart.js') }}"></script>
 </body>
 </html>

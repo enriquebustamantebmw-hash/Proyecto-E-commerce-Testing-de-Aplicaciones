@@ -1,0 +1,38 @@
+[
+    {
+        "id": 1,
+        "nombre": "iPhone 15",
+        "categoria": "Celulares",
+        "precio": 1200000,
+        "stock": 5,
+        "imagen": "/static/uploads/ee5149af031e4237a934594ce290c972.webp",
+        "descripcion": "El iPhone 15 redefine la experiencia móvil con su pantalla Super Retina XDR de 6.1 pulgadas y el potente chip A16 Bionic. Cuenta con sistema de cámara dual de 48 MP con zoom óptico 2x, conectividad USB-C y Dynamic Island.\n\nDiseño en aluminio aeroespacial con vidrio reforzado, resistencia al agua IP68 y batería que rinde todo el día. Disponible en varios colores."
+    },
+    {
+        "id": 2,
+        "nombre": "Samsung S24",
+        "categoria": "Celulares",
+        "precio": 950000,
+        "stock": 3,
+        "imagen": "/static/uploads/5abac735173047749a6a0566fdfeb6c2.jpg",
+        "descripcion": "El Samsung Galaxy S24 combina inteligencia artificial integrada (Galaxy AI) con una pantalla Dynamic AMOLED 2X de 6.2 pulgadas y 120Hz. Procesador Snapdragon 8 Gen 3 para máximo rendimiento en juegos y multitarea.\n\nCámara triple de 50 MP con zoom óptico 3x, traducción en tiempo real, búsqueda visual con Circle to Search y batería de 4000 mAh con carga rápida."
+    },
+    {
+        "id": 3,
+        "nombre": "Notebook Lenovo",
+        "categoria": "Notebooks",
+        "precio": 850000,
+        "stock": 0,
+        "imagen": "/static/uploads/b118ff1e6ffc426a81b8f38b03cd14d4.webp",
+        "descripcion": "Notebook Lenovo IdeaPad con procesador Intel Core i5 de última generación, 8 GB de RAM DDR4 y SSD NVMe de 512 GB para arranque y carga ultrarrápida.\n\nPantalla Full HD de 15.6 pulgadas con tecnología antirreflejo, teclado retroiluminado y batería de hasta 8 horas de autonomía. Ideal para estudio, trabajo y entretenimiento."
+    },
+    {
+        "id": 4,
+        "nombre": "Auriculares JBL",
+        "categoria": "Accesorios",
+        "precio": 90000,
+        "stock": 10,
+        "imagen": "/static/uploads/c05f5d0398644856a9b46d22f67b1d6b.png",
+        "descripcion": "Auriculares inalámbricos JBL con sonido JBL Pure Bass característico, conexión Bluetooth 5.2 estable y hasta 40 horas de reproducción combinadas con el estuche de carga.\n\nIncluyen cancelación activa de ruido, micrófono integrado para llamadas claras, controles táctiles y resistencia al agua IPX4. Perfectos para deporte, viajes y uso diario."
+    }
+]

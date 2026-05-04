@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin · TestCommerce</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+
+    <nav class="navbar">
+        <a href="/" class="logo">Test<span>Commerce</span></a>
+        <div class="nav-links">
+            <a href="/">Inicio</a>
+            <a href="/productos">Productos</a>
+            <a href="/carrito" class="nav-cart">Carrito<span class="cart-count" data-cart-count hidden>0</span></a>
+            {% if current_rol == 'admin' %}<a href="/admin">Admin</a>{% endif %}
+            <a href="/logout" class="cta">Cerrar sesión</a>
+        </div>
+    </nav>
+
+    <div class="contenedor">
+        <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:16px; margin-bottom:24px;">
+            <div>
+                <h1 class="titulo">Administración de productos</h1>
+                <p class="subtitulo">{{ productos|length }} producto(s) en el catálogo.</p>
+            </div>
+            <a href="{{ url_for('admin_nuevo') }}" class="btn">+ Nuevo producto</a>
+        </div>
+
+        {% if productos|length == 0 %}
+            <div class="empty-state">
+                <div class="icon">📦</div>
+                <p>No hay productos cargados todavía.</p>
+                <a class="btn" href="{{ url_for('admin_nuevo') }}">Crear el primero</a>
+            </div>
+        {% else %}
+            <div class="admin-table">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Imagen</th>
+                            <th>Nombre</th>
+                            <th>Categoría</th>
+                            <th>Precio</th>
+                            <th>Stock</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for p in productos %}
+                            <tr>
+                                <td><img src="{{ p.imagen }}" alt="{{ p.nombre }}" class="thumb"></td>
+                                <td><strong>{{ p.nombre }}</strong></td>
+                                <td><span class="tag">{{ p.categoria }}</span></td>
+                                <td>{{ p.precio | precio }}</td>
+                                <td>
+                                    {% if p.stock == 0 %}
+                                        <span class="pill pill-danger">Sin stock</span>
+                                    {% elif p.stock <= 3 %}
+                                        <span class="pill pill-warn">{{ p.stock }}</span>
+                                    {% else %}
+                                        <span class="pill pill-ok">{{ p.stock }}</span>
+                                    {% endif %}
+                                </td>
+                                <td class="actions">
+                                    <a href="{{ url_for('admin_editar', id_producto=p.id) }}" class="btn btn-ghost btn-sm">Editar</a>
+                                    <form method="POST" action="{{ url_for('admin_eliminar', id_producto=p.id) }}" style="display:inline" onsubmit="return confirm('¿Eliminar {{ p.nombre }}?');">
+                                        <button type="submit" class="btn btn-danger btn-sm">Eliminar</button>
+                                    </form>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        {% endif %}
+    </div>
+
+    <footer class="footer">
+        TestCommerce · Panel de administración
+    </footer>
+
+    <script type="module" src="{{ url_for('static', filename='animations.js') }}"></script>
+    <script type="module" src="{{ url_for('static', filename='cart.js') }}"></script>
+</body>
+</html>

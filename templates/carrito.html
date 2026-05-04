@@ -2,60 +2,78 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <title>Carrito</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Carrito · TestCommerce</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 <body>
 
-    <div class="navbar">
-        <div class="logo">Test<span>Commerce</span></div>
-        <div>
+    <nav class="navbar">
+        <a href="/" class="logo">Test<span>Commerce</span></a>
+        <div class="nav-links">
             <a href="/">Inicio</a>
             <a href="/productos">Productos</a>
-            <a href="/checkout">Finalizar compra</a>
+            <a href="/carrito" class="nav-cart">Carrito<span class="cart-count" data-cart-count hidden>0</span></a>
+            {% if current_rol == 'admin' %}<a href="/admin">Admin</a>{% endif %}
+            <a href="/checkout" class="cta">Finalizar compra</a>
+        </div>
+    </nav>
+
+    <div class="contenedor" id="cart-page">
+        <h1 class="titulo">Tu carrito</h1>
+        <p class="subtitulo" data-cart-subtitle>
+            {% if carrito|length == 0 %}Aún no agregaste productos.{% else %}{{ carrito|length }} producto(s) en el carrito.{% endif %}
+        </p>
+
+        <div class="empty-state" data-cart-empty {% if carrito|length > 0 %}hidden{% endif %}>
+            <div class="icon">🛒</div>
+            <p>Tu carrito está vacío.</p>
+            <a class="btn" href="/productos">Ver productos</a>
+        </div>
+
+        <div class="carrito-grid" data-cart-grid {% if carrito|length == 0 %}hidden{% endif %}>
+            <div data-cart-items>
+                {% for item in carrito %}
+                    <div class="carrito-item" data-cart-item data-id="{{ item.id }}">
+                        <div style="flex:1">
+                            <h3>{{ item.nombre }}</h3>
+                            <div class="meta">
+                                <span>Precio: {{ item.precio | precio }}</span>
+                            </div>
+                            <p class="subtotal" data-subtotal>Subtotal: {{ (item.precio * item.cantidad) | precio }}</p>
+                        </div>
+
+                        <div class="qty-controls">
+                            <button type="button" class="qty-btn" data-qty-action="dec" aria-label="Restar">−</button>
+                            <span class="qty-value" data-qty>{{ item.cantidad }}</span>
+                            <button type="button" class="qty-btn" data-qty-action="inc" aria-label="Sumar">+</button>
+                        </div>
+
+                        <button type="button" class="btn btn-danger btn-sm" data-cart-remove aria-label="Eliminar">✕</button>
+                    </div>
+                {% endfor %}
+            </div>
+
+            <aside class="total-box">
+                <h2>Total</h2>
+                <div class="total-amount" data-cart-total>{{ total | precio }}</div>
+                <div class="row"><span>Envío</span><span>A coordinar</span></div>
+                <div class="row"><span>Productos</span><span data-cart-count-text>{{ carrito|length }}</span></div>
+                <hr>
+                <a class="btn btn-block" href="/checkout">Finalizar compra</a>
+                <a class="btn btn-ghost btn-block" href="/productos" style="margin-top:10px">Seguir comprando</a>
+            </aside>
         </div>
     </div>
 
-    <div class="contenedor">
-        <h1 class="titulo">Carrito de compras</h1>
+    <footer class="footer">
+        TestCommerce · Carrito
+    </footer>
 
-        {% if carrito|length == 0 %}
-
-            <div class="card">
-                <p>El carrito esta vacio.</p>
-                <br>
-                <a class="btn" href="/productos">Ver productos</a>
-            </div>
-
-        {% else %}
-
-            {% for item in carrito %}
-
-                <div class="carrito-item">
-                    <div>
-                        <h3>{{ item.nombre }}</h3>
-                        <p>Precio unitario: ${{ item.precio }}</p>
-                        <p>Cantidad: {{ item.cantidad }}</p>
-                        <p>Subtotal: ${{ item.precio * item.cantidad }}</p>
-                    </div>
-
-                    <a class="btn btn-danger" href="/eliminar_carrito/{{ item.id }}">Eliminar</a>
-                </div>
-
-            {% endfor %}
-
-            <div class="total-box">
-                <h2>Total: ${{ total }}</h2>
-                <br>
-                <a class="btn" href="/checkout">Finalizar compra</a>
-            </div>
-
-        {% endif %}
-    </div>
-
-    <div class="footer">
-        TestCommerce - Carrito
-    </div>
-
+    <script type="module" src="{{ url_for('static', filename='animations.js') }}"></script>
+    <script type="module" src="{{ url_for('static', filename='cart.js') }}"></script>
 </body>
 </html>

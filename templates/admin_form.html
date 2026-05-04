@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% if producto %}Editar{% else %}Nuevo{% endif %} producto · TestCommerce</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+
+    <nav class="navbar">
+        <a href="/" class="logo">Test<span>Commerce</span></a>
+        <div class="nav-links">
+            <a href="/">Inicio</a>
+            <a href="/productos">Productos</a>
+            <a href="/admin">Admin</a>
+            <a href="/logout" class="cta">Cerrar sesión</a>
+        </div>
+    </nav>
+
+    <div class="form-box" style="max-width: 560px;">
+        <h1>{% if producto %}Editar producto{% else %}Nuevo producto{% endif %}</h1>
+        <p class="subtitulo">Completá los datos. Podés subir una imagen o pegar una URL.</p>
+
+        <form method="POST" enctype="multipart/form-data">
+            <label>Nombre</label>
+            <input type="text" name="nombre" value="{{ producto.nombre if producto else '' }}" placeholder="Ej: iPhone 15">
+
+            <label>Categoría</label>
+            <input type="text" name="categoria" value="{{ producto.categoria if producto else '' }}" placeholder="Ej: Celulares">
+
+            <div style="display:grid; grid-template-columns: 1fr 1fr; gap: 14px;">
+                <div>
+                    <label>Precio</label>
+                    <input type="number" name="precio" min="0" value="{{ producto.precio if producto else '' }}" placeholder="120000">
+                </div>
+                <div>
+                    <label>Stock</label>
+                    <input type="number" name="stock" min="0" value="{{ producto.stock if producto else '' }}" placeholder="10">
+                </div>
+            </div>
+
+            <label>Descripción</label>
+            <textarea name="descripcion" rows="5" placeholder="Detalles, especificaciones, características...">{{ producto.descripcion if producto else '' }}</textarea>
+
+            <label>Imagen del producto</label>
+            <div class="dropzone" id="dropzone" data-current="{{ producto.imagen if producto else '' }}">
+                <input type="file" name="imagen_archivo" id="imagen_archivo" accept="image/png, image/jpeg, image/gif, image/webp" hidden>
+
+                <div class="dropzone-empty">
+                    <div class="dropzone-icon">📤</div>
+                    <p class="dropzone-text"><strong>Arrastrá una imagen</strong> o hacé click para elegir</p>
+                    <p class="dropzone-hint">PNG, JPG, GIF o WEBP</p>
+                </div>
+
+                <div class="dropzone-preview" hidden>
+                    <img src="" alt="preview" id="dropzone-img">
+                    <div class="dropzone-info">
+                        <span class="dropzone-filename"></span>
+                        <button type="button" class="dropzone-remove" aria-label="Quitar">✕</button>
+                    </div>
+                </div>
+            </div>
+
+            {% if producto and producto.imagen %}
+                <p class="subtitulo" style="margin: -8px 0 16px;">Imagen actual: <a href="{{ producto.imagen }}" target="_blank" style="color:var(--primary)">ver</a> · Si no subís una nueva, se mantiene.</p>
+            {% endif %}
+
+            <label>O pegar URL de imagen</label>
+            <input type="url" name="imagen_url" placeholder="https://...">
+
+            <button class="btn btn-block" type="submit">{% if producto %}Guardar cambios{% else %}Crear producto{% endif %}</button>
+            <a href="{{ url_for('admin_productos') }}" class="btn btn-ghost btn-block" style="margin-top:10px">Cancelar</a>
+        </form>
+
+        {% if mensaje %}<p class="mensaje">{{ mensaje }}</p>{% endif %}
+    </div>
+
+    <footer class="footer">
+        TestCommerce · Panel de administración
+    </footer>
+
+    <script type="module" src="{{ url_for('static', filename='animations.js') }}"></script>
+    <script type="module" src="{{ url_for('static', filename='cart.js') }}"></script>
+</body>
+</html>

@@ -2,45 +2,55 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <title>Login</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Iniciar sesión · TestCommerce</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 <body>
 
-    <div class="navbar">
-        <div class="logo">Test<span>Commerce</span></div>
-        <div>
+    <nav class="navbar">
+        <a href="/" class="logo">Test<span>Commerce</span></a>
+        <div class="nav-links">
             <a href="/">Inicio</a>
             <a href="/productos">Productos</a>
-            <a href="/carrito">Carrito</a>
+            <a href="/carrito" class="nav-cart">Carrito<span class="cart-count" data-cart-count hidden>0</span></a>
+            {% if current_rol == 'admin' %}<a href="/admin">Admin</a>{% endif %}
         </div>
-    </div>
+    </nav>
 
     <div class="form-box">
-        <h1>Iniciar sesion</h1>
+        <h1>Iniciar sesión</h1>
+        <p class="subtitulo">Ingresá con tus credenciales para finalizar la compra.</p>
 
         <form method="POST">
-            <label>Email:</label>
+            <label>Email</label>
             <input type="email" name="email" placeholder="usuario@test.com">
 
-            <label>Contraseña:</label>
-            <input type="password" name="password" placeholder="1234">
+            <label>Contraseña</label>
+            <input type="password" name="password" placeholder="••••">
 
-            <button class="btn" type="submit">Ingresar</button>
+            <button class="btn btn-block" type="submit">Ingresar</button>
         </form>
 
-        <p class="mensaje">{{ mensaje }}</p>
+        {% if mensaje %}<p class="mensaje">{{ mensaje }}</p>{% endif %}
 
         <div class="info-login">
-            <p><strong>Usuario de prueba:</strong></p>
-            <p>Email: usuario@test.com</p>
-            <p>Contraseña: 1234</p>
+            <p><strong>Cliente de prueba</strong></p>
+            <p>Email: usuario@test.com · Contraseña: 1234</p>
+            <br>
+            <p><strong>Administrador</strong></p>
+            <p>Email: admin@test.com · Contraseña: 1234</p>
         </div>
     </div>
 
-    <div class="footer">
-        TestCommerce - Login
-    </div>
+    <footer class="footer">
+        TestCommerce · Login
+    </footer>
 
+    <script type="module" src="{{ url_for('static', filename='animations.js') }}"></script>
+    <script type="module" src="{{ url_for('static', filename='cart.js') }}"></script>
 </body>
 </html>

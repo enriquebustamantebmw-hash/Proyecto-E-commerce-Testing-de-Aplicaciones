@@ -2,34 +2,40 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <title>Checkout</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Checkout · TestCommerce</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 <body>
 
-    <div class="navbar">
-        <div class="logo">Test<span>Commerce</span></div>
-        <div>
+    <nav class="navbar">
+        <a href="/" class="logo">Test<span>Commerce</span></a>
+        <div class="nav-links">
             <a href="/">Inicio</a>
             <a href="/productos">Productos</a>
-            <a href="/carrito">Carrito</a>
+            <a href="/carrito" class="nav-cart">Carrito<span class="cart-count" data-cart-count hidden>0</span></a>
+            {% if current_rol == 'admin' %}<a href="/admin">Admin</a>{% endif %}
         </div>
-    </div>
+    </nav>
 
     <div class="form-box">
         <h1>Finalizar compra</h1>
+        <p class="subtitulo">Completá tus datos para confirmar el pedido.</p>
 
         <form method="POST">
-            <label>Nombre completo:</label>
+            <label>Nombre completo</label>
             <input type="text" name="nombre" placeholder="Ej: Enrique Bustamante">
 
-            <label>Direccion:</label>
+            <label>Dirección</label>
             <input type="text" name="direccion" placeholder="Ej: Av. Corrientes 1234">
 
-            <label>Telefono:</label>
+            <label>Teléfono</label>
             <input type="text" name="telefono" placeholder="Ej: 1123456789">
 
-            <label>Metodo de pago:</label>
+            <label>Método de pago</label>
             <select name="pago">
                 <option value="">Seleccionar</option>
                 <option value="tarjeta">Tarjeta</option>
@@ -37,15 +43,17 @@
                 <option value="transferencia">Transferencia</option>
             </select>
 
-            <button class="btn" type="submit">Confirmar pedido</button>
+            <button class="btn btn-block" type="submit">Confirmar pedido</button>
         </form>
 
-        <p class="mensaje">{{ mensaje }}</p>
+        {% if mensaje %}<p class="mensaje">{{ mensaje }}</p>{% endif %}
     </div>
 
-    <div class="footer">
-        TestCommerce - Checkout
-    </div>
+    <footer class="footer">
+        TestCommerce · Checkout
+    </footer>
 
+    <script type="module" src="{{ url_for('static', filename='animations.js') }}"></script>
+    <script type="module" src="{{ url_for('static', filename='cart.js') }}"></script>
 </body>
 </html>

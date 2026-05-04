@@ -1,0 +1,36 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+
+# Entornos virtuales
+.venv/
+venv/
+env/
+ENV/
+
+# IDE / editores
+.vscode/
+.idea/
+*.swp
+*.swo
+.claude/
+
+# Sistema operativo
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Flask
+instance/
+.flaskenv
+
+# Logs
+*.log
+
+# Distribución
+build/
+dist/
+*.egg-info/

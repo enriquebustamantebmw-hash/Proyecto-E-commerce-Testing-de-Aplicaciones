@@ -2,51 +2,72 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <title>Productos</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Productos · TestCommerce</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 <body>
 
-    <div class="navbar">
-        <div class="logo">Test<span>Commerce</span></div>
-        <div>
+    <nav class="navbar">
+        <a href="/" class="logo">Test<span>Commerce</span></a>
+        <div class="nav-links">
             <a href="/">Inicio</a>
             <a href="/productos">Productos</a>
-            <a href="/carrito">Carrito</a>
-            <a href="/login">Login</a>
+            <a href="/carrito" class="nav-cart">Carrito<span class="cart-count" data-cart-count hidden>0</span></a>
+            {% if current_rol == 'admin' %}<a href="/admin">Admin</a>{% endif %}
+            {% if current_user %}
+                <a href="/logout" class="cta">Cerrar sesión</a>
+            {% else %}
+                <a href="/login" class="cta">Login</a>
+            {% endif %}
         </div>
-    </div>
+    </nav>
 
     <div class="contenedor">
-        <h1 class="titulo">Productos</h1>
+        <h1 class="titulo">Catálogo de productos</h1>
+        <p class="subtitulo">{{ productos|length }} productos disponibles para testear.</p>
 
         <div class="grid-productos">
 
             {% for producto in productos %}
 
-                <div class="card">
-                    <img src="{{ producto.imagen }}" alt="{{ producto.nombre }}">
+                <article class="card">
+                    <a href="{{ url_for('detalle_producto', id_producto=producto.id) }}" class="card-link">
+                        <div class="card-img">
+                            <img src="{{ producto.imagen }}" alt="{{ producto.nombre }}">
+                        </div>
 
-                    <h3>{{ producto.nombre }}</h3>
-                    <p>Categoria: {{ producto.categoria }}</p>
-                    <p class="precio">${{ producto.precio }}</p>
-                    <p class="stock">Stock disponible: {{ producto.stock }}</p>
+                        <span class="tag">{{ producto.categoria }}</span>
+                        <h3>{{ producto.nombre }}</h3>
+                        <p class="precio">{{ producto.precio | precio }}</p>
+                    </a>
 
                     {% if producto.stock > 0 %}
-                        <a class="btn" href="/agregar_carrito/{{ producto.id }}">Agregar al carrito</a>
+                        <p class="stock {% if producto.stock <= 3 %}low{% endif %}">
+                            {% if producto.stock <= 3 %}Últimas {{ producto.stock }} unidades{% else %}{{ producto.stock }} en stock{% endif %}
+                        </p>
+                        <div class="cart-action" data-cart-action data-product-id="{{ producto.id }}">
+                            <a class="btn btn-block" href="/agregar_carrito/{{ producto.id }}" data-add-to-cart="{{ producto.id }}">Agregar al carrito</a>
+                        </div>
                     {% else %}
+                        <p class="stock" style="visibility:hidden">.</p>
                         <span class="sin-stock">Sin stock</span>
                     {% endif %}
-                </div>
+                </article>
 
             {% endfor %}
 
         </div>
     </div>
 
-    <div class="footer">
-        TestCommerce - Catalogo de productos
-    </div>
+    <footer class="footer">
+        TestCommerce · Catálogo de productos
+    </footer>
 
+    <script type="module" src="{{ url_for('static', filename='animations.js') }}"></script>
+    <script type="module" src="{{ url_for('static', filename='cart.js') }}"></script>
 </body>
 </html>
