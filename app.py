@@ -77,6 +77,40 @@ def inject_session():
     }
 
 
+@app.context_processor
+def inject_asset_version():
+    """Cache buster: usa el mtime del CSS para forzar recarga al modificarlo."""
+    css_path = os.path.join(BASE_DIR, "static", "style.css")
+    try:
+        version = int(os.path.getmtime(css_path))
+    except OSError:
+        version = 0
+    return {"asset_v": version, "is_debug": app.debug}
+
+
+def _watched_mtime():
+    """Devuelve el mtime más reciente de templates y static (para auto-reload)."""
+    latest = 0
+    for folder in ("templates", "static"):
+        base = os.path.join(BASE_DIR, folder)
+        for root, _, files in os.walk(base):
+            for f in files:
+                try:
+                    m = os.path.getmtime(os.path.join(root, f))
+                    if m > latest:
+                        latest = m
+                except OSError:
+                    pass
+    return latest
+
+
+@app.route("/api/_dev/version")
+def dev_version():
+    if not app.debug:
+        return jsonify({"error": "disabled"}), 404
+    return jsonify({"v": _watched_mtime()})
+
+
 @app.template_filter("precio")
 def formato_precio(valor):
     try:

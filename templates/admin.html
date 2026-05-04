@@ -7,9 +7,10 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}?v={{ asset_v }}">
 </head>
 <body>
+    {% include '_preloader.html' %}
 
     <nav class="navbar">
         <a href="/" class="logo">Test<span>Commerce</span></a>
@@ -84,7 +85,20 @@
         TestCommerce · Panel de administración
     </footer>
 
-    <script type="module" src="{{ url_for('static', filename='animations.js') }}"></script>
-    <script type="module" src="{{ url_for('static', filename='cart.js') }}"></script>
+    <script type="module" src="{{ url_for('static', filename='animations.js') }}?v={{ asset_v }}"></script>
+    <script type="module" src="{{ url_for('static', filename='cart.js') }}?v={{ asset_v }}"></script>
+    {% if is_debug %}<script src="{{ url_for('static', filename='dev-reload.js') }}"></script>{% endif %}
+    <script>
+        document.body.classList.add('is-loading');
+        window.addEventListener('load', () => {
+            const p = document.getElementById('preloader');
+            if (!p) return;
+            setTimeout(() => {
+                p.classList.add('hidden');
+                document.body.classList.remove('is-loading');
+                setTimeout(() => p.remove(), 600);
+            }, 400);
+        });
+    </script>
 </body>
 </html>
