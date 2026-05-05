@@ -4,39 +4,7 @@ const easeOut = [0.22, 1, 0.36, 1];
 
 document.addEventListener("DOMContentLoaded", () => {
 
-    // Hero: entrada en cascada
-    const heroContent = document.querySelector(".hero-content > *");
-    if (heroContent) {
-        animate(
-            ".hero-content > *",
-            { opacity: [0, 1], transform: ["translateY(24px)", "translateY(0)"] },
-            { duration: 0.7, delay: stagger(0.1), easing: easeOut }
-        );
-    }
-
-    // Hero mockups: entrada con escala y rotación
-    const mockMain = document.querySelector(".mock-card.main");
-    if (mockMain) {
-        animate(
-            ".mock-card.main",
-            { opacity: [0, 1], transform: ["translateX(-50%) rotate(-2deg) scale(0.85)", "translateX(-50%) rotate(-2deg) scale(1)"] },
-            { duration: 0.8, delay: 0.3, easing: easeOut }
-        );
-    }
-    if (document.querySelector(".mock-card.left")) {
-        animate(
-            ".mock-card.left",
-            { opacity: [0, 0.85], transform: ["rotate(-20deg) translateY(40px)", "rotate(-8deg) translateY(0)"] },
-            { duration: 0.9, delay: 0.5, easing: easeOut }
-        );
-    }
-    if (document.querySelector(".mock-card.right")) {
-        animate(
-            ".mock-card.right",
-            { opacity: [0, 0.85], transform: ["rotate(20deg) translateY(40px)", "rotate(6deg) translateY(0)"] },
-            { duration: 0.9, delay: 0.7, easing: easeOut }
-        );
-    }
+    // (Sin animaciones de entrada del hero — el contenido es visible siempre vía CSS)
 
     // Navbar: fade-down al cargar
     const navbar = document.querySelector(".navbar");
@@ -44,42 +12,48 @@ document.addEventListener("DOMContentLoaded", () => {
         animate(navbar, { opacity: [0, 1], transform: ["translateY(-12px)", "translateY(0)"] }, { duration: 0.5, easing: easeOut });
     }
 
+    // Helper: setea estado inicial (oculto/desplazado) y anima a estado final cuando entra en view.
+    // Como esto corre dentro de DOMContentLoaded y motion ya está importado, si el import fallara
+    // este código nunca se ejecuta y los elementos quedan visibles por default (sin glitch).
+    const reveal = (el, fromTransform, toTransform = "none", { amount = 0.2, duration = 0.6 } = {}) => {
+        el.style.opacity = "0";
+        el.style.transform = fromTransform;
+        el.style.willChange = "opacity, transform";
+        inView(el, () => {
+            animate(el, { opacity: 1, transform: toTransform }, { duration, easing: easeOut });
+        }, { amount });
+    };
+
     // Scroll reveal: títulos y subtítulos
     document.querySelectorAll(".titulo, .subtitulo").forEach((el) => {
-        el.style.opacity = "0";
-        inView(el, () => {
-            animate(el, { opacity: [0, 1], transform: ["translateY(20px)", "translateY(0)"] }, { duration: 0.6, easing: easeOut });
-        }, { amount: 0.3 });
+        reveal(el, "translateY(20px)", "translateY(0)", { amount: 0.3 });
     });
 
     // Scroll reveal: cards y features con stagger por grupo
     document.querySelectorAll(".grid-features, .grid-productos").forEach((grid) => {
-        const items = grid.children;
-        Array.from(items).forEach((item) => { item.style.opacity = "0"; });
-
+        const items = Array.from(grid.children);
+        items.forEach((item) => {
+            item.style.opacity = "0";
+            item.style.transform = "translateY(28px) scale(0.96)";
+            item.style.willChange = "opacity, transform";
+        });
         inView(grid, () => {
             animate(
-                Array.from(items),
-                { opacity: [0, 1], transform: ["translateY(28px) scale(0.96)", "translateY(0) scale(1)"] },
+                items,
+                { opacity: 1, transform: "translateY(0) scale(1)" },
                 { duration: 0.55, delay: stagger(0.08), easing: easeOut }
             );
         }, { amount: 0.15 });
     });
 
     // Scroll reveal: items del carrito
-    document.querySelectorAll(".carrito-item").forEach((item, i) => {
-        item.style.opacity = "0";
-        inView(item, () => {
-            animate(item, { opacity: [0, 1], transform: ["translateX(-20px)", "translateX(0)"] }, { duration: 0.5, easing: easeOut });
-        }, { amount: 0.3 });
+    document.querySelectorAll(".carrito-item").forEach((item) => {
+        reveal(item, "translateX(-20px)", "translateX(0)", { amount: 0.3, duration: 0.5 });
     });
 
     // Total box / form box: fade-in con scale
     document.querySelectorAll(".total-box, .form-box, .empty-state").forEach((el) => {
-        el.style.opacity = "0";
-        inView(el, () => {
-            animate(el, { opacity: [0, 1], transform: ["scale(0.96)", "scale(1)"] }, { duration: 0.5, easing: easeOut });
-        }, { amount: 0.2 });
+        reveal(el, "scale(0.96)", "scale(1)", { amount: 0.2, duration: 0.5 });
     });
 
     // Botones: hover con micro-interacción
@@ -186,17 +160,5 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     }
 
-    // Parallax suave en el hero al hacer scroll
-    const hero = document.querySelector(".hero");
-    if (hero) {
-        window.addEventListener("scroll", () => {
-            const y = window.scrollY;
-            if (y < 800) {
-                const visual = document.querySelector(".hero-visual");
-                const content = document.querySelector(".hero-content");
-                if (visual) visual.style.transform = `translateY(${y * 0.15}px)`;
-                if (content) content.style.transform = `translateY(${y * 0.08}px)`;
-            }
-        }, { passive: true });
-    }
+    // (Parallax del hero removido — generaba saltos y cortes en móvil)
 });
