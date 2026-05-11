@@ -1,7 +1,12 @@
 # TestCommerce — E-commerce para Testing de Aplicaciones
 
 Tienda ficticia desarrollada en Flask, pensada para practicar testing manual y automatizado: login, carrito, checkout, validaciones, manejo de stock y panel de administración con CRUD de productos.
-
+Grupo FSBEE, Integrantes:
+● Escalante, Nahuel
+● Bustamante, Enrique
+● Silva, Maximo
+● Azcoaga, Christian
+● Franco, Tomas
 ## Requisitos
 
 - Python 3.10 o superior
