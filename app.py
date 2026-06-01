@@ -1,4 +1,5 @@
 import json
+import logging
 import os
 import uuid
 from functools import wraps
@@ -7,6 +8,16 @@ from werkzeug.utils import secure_filename
 
 app = Flask(__name__)
 app.secret_key = "clave_secreta"
+
+
+# Silencia en los logs el polling del auto-reload de desarrollo (/api/_dev/version),
+# que se repite una vez por segundo y ensucia la consola. El resto de los logs no se toca.
+class _OcultarDevVersion(logging.Filter):
+    def filter(self, record):
+        return "/api/_dev/version" not in record.getMessage()
+
+
+logging.getLogger("werkzeug").addFilter(_OcultarDevVersion())
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 PRODUCTOS_FILE = os.path.join(BASE_DIR, "productos.json")
