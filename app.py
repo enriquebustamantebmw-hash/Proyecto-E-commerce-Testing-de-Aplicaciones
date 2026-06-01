@@ -21,6 +21,7 @@ logging.getLogger("werkzeug").addFilter(_OcultarDevVersion())
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 PRODUCTOS_FILE = os.path.join(BASE_DIR, "productos.json")
+PEDIDOS_FILE = os.path.join(BASE_DIR, "pedidos.json")
 UPLOAD_FOLDER = os.path.join(BASE_DIR, "static", "uploads")
 EXTENSIONES_PERMITIDAS = {"png", "jpg", "jpeg", "gif", "webp"}
 
@@ -43,6 +44,18 @@ def proximo_id(productos):
     if len(productos) == 0:
         return 1
     return max(p["id"] for p in productos) + 1
+
+
+def cargar_pedidos():
+    if not os.path.exists(PEDIDOS_FILE):
+        return []
+    with open(PEDIDOS_FILE, "r", encoding="utf-8") as f:
+        return json.load(f)
+
+
+def guardar_pedidos(pedidos):
+    with open(PEDIDOS_FILE, "w", encoding="utf-8") as f:
+        json.dump(pedidos, f, indent=4, ensure_ascii=False)
 
 
 def extension_valida(nombre_archivo):
@@ -293,6 +306,132 @@ def api_eliminar(id_producto):
     carrito = session.get("carrito", [])
     session["carrito"] = [item for item in carrito if item["id"] != id_producto]
     return jsonify(_carrito_resumen())
+
+
+# ---------- API JSON de productos y pedidos (Sprint 2) ----------
+
+@app.route("/api/productos", methods=["GET"])
+def api_productos():
+    """Devuelve los productos en JSON con filtros por categoría, precio,
+    disponibilidad, búsqueda y ordenamiento (query params opcionales)."""
+    productos = cargar_productos()
+
+    # Filtro por categoría (case-insensitive)
+    categoria = request.args.get("categoria", "").strip().lower()
+    if categoria:
+        productos = [p for p in productos if p["categoria"].lower() == categoria]
+
+    # Filtro por rango de precio
+    precio_min = request.args.get("precio_min", type=int)
+    if precio_min is not None:
+        productos = [p for p in productos if p["precio"] >= precio_min]
+    precio_max = request.args.get("precio_max", type=int)
+    if precio_max is not None:
+        productos = [p for p in productos if p["precio"] <= precio_max]
+
+    # Filtro por disponibilidad (?disponible=true => solo con stock > 0)
+    disponible = request.args.get("disponible", "").strip().lower()
+    if disponible in ("true", "1", "si"):
+        productos = [p for p in productos if p["stock"] > 0]
+
+    # Búsqueda por texto en el nombre
+    buscar = request.args.get("buscar", "").strip().lower()
+    if buscar:
+        productos = [p for p in productos if buscar in p["nombre"].lower()]
+
+    # Ordenamiento
+    orden = request.args.get("orden", "").strip().lower()
+    if orden == "precio_asc":
+        productos = sorted(productos, key=lambda p: p["precio"])
+    elif orden == "precio_desc":
+        productos = sorted(productos, key=lambda p: p["precio"], reverse=True)
+    elif orden == "nombre":
+        productos = sorted(productos, key=lambda p: p["nombre"].lower())
+
+    return jsonify({"total": len(productos), "productos": productos})
+
+
+@app.route("/api/pedidos", methods=["POST"])
+def api_pedidos():
+    """Crea un pedido a partir de los items enviados (o del carrito en sesión),
+    validando campos obligatorios, stock disponible y generando un ID."""
+    data = request.get_json(silent=True) or {}
+
+    # Campos obligatorios del cliente
+    obligatorios = ["nombre", "direccion", "telefono", "pago"]
+    faltantes = [c for c in obligatorios if not str(data.get(c, "")).strip()]
+    if faltantes:
+        return jsonify({"error": "Campos obligatorios faltantes", "campos": faltantes}), 400
+
+    # Items: vienen en el body o se toman del carrito en sesión
+    items_pedido = data.get("items")
+    if items_pedido is None:
+        items_pedido = [{"id": i["id"], "cantidad": i["cantidad"]} for i in session.get("carrito", [])]
+    if not items_pedido:
+        return jsonify({"error": "El pedido no tiene items"}), 400
+
+    productos = cargar_productos()
+    detalle = []
+    total = 0
+    for item in items_pedido:
+        try:
+            id_producto = int(item["id"])
+            cantidad = int(item["cantidad"])
+        except (KeyError, TypeError, ValueError):
+            return jsonify({"error": "Item inválido", "item": item}), 400
+
+        if cantidad <= 0:
+            return jsonify({"error": f"Cantidad inválida para el producto {id_producto}"}), 400
+
+        producto = next((p for p in productos if p["id"] == id_producto), None)
+        if producto is None:
+            return jsonify({"error": f"Producto {id_producto} no encontrado"}), 404
+        if cantidad > producto["stock"]:
+            return jsonify({
+                "error": "Stock insuficiente",
+                "producto": producto["nombre"],
+                "stock_disponible": producto["stock"],
+                "solicitado": cantidad,
+            }), 400
+
+        subtotal = producto["precio"] * cantidad
+        total += subtotal
+        detalle.append({
+            "id": producto["id"],
+            "nombre": producto["nombre"],
+            "precio": producto["precio"],
+            "cantidad": cantidad,
+            "subtotal": subtotal,
+        })
+
+    # Descontar stock y persistir productos
+    for item in detalle:
+        prod = next(p for p in productos if p["id"] == item["id"])
+        prod["stock"] -= item["cantidad"]
+    guardar_productos(productos)
+
+    # Generar y guardar el pedido
+    pedidos = cargar_pedidos()
+    nuevo_pedido = {
+        "id": (max((ped["id"] for ped in pedidos), default=0) + 1),
+        "cliente": {
+            "nombre": data["nombre"].strip(),
+            "direccion": data["direccion"].strip(),
+            "telefono": data["telefono"].strip(),
+            "pago": data["pago"].strip(),
+        },
+        "items": detalle,
+        "total": total,
+        "estado": "confirmado",
+    }
+    pedidos.append(nuevo_pedido)
+    guardar_pedidos(pedidos)
+
+    # Si el pedido usó el carrito de sesión, vaciarlo
+    if data.get("items") is None and "carrito" in session:
+        session["carrito"] = []
+
+    return jsonify({"mensaje": "Pedido confirmado correctamente", "pedido": nuevo_pedido}), 201
 
 
 @app.route("/login", methods=["GET", "POST"])

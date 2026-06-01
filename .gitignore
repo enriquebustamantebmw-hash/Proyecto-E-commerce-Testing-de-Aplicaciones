@@ -27,6 +27,9 @@ desktop.ini
 instance/
 .flaskenv
 
+# Pedidos generados en ejecución (datos de prueba, no versionar)
+pedidos.json
+
 # Logs
 *.log
 
