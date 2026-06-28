@@ -38,3 +38,7 @@ pedidos.json
 build/
 dist/
 *.egg-info/
+
+# JMeter: el dashboard HTML es regenerable desde el .jtl (no versionar sus
+# librerías vendoreadas). Los resultados crudos (resultados.jtl) sí se versionan.
+jmeter/reporte-html/
